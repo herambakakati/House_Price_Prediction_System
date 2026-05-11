@@ -3,19 +3,6 @@ import pandas as pd
 import numpy as np
 import joblib
 from pathlib import Path
-import os
-
-MODEL_PATH = "lightgbm_model.pkl"
-
-@st.cache_resource
-def load_model():
-    if not os.path.exists(MODEL_PATH):
-        st.error(f"Model file not found: {MODEL_PATH}")
-        st.stop()
-
-    return joblib.load(MODEL_PATH)
-
-model = load_model()
 
 # ==========================================================
 # PAGE CONFIG
@@ -30,7 +17,7 @@ st.set_page_config(
 # PATHS
 # ==========================================================
 BASE_DIR = Path(__file__).parent
-MODEL_PATH = BASE_DIR / "models" / "lightgbm_model.pkl"
+MODEL_PATH = BASE_DIR / "lightgbm_model.pkl"
 DATA_PATH = BASE_DIR / "House Price.csv"
 
 # ==========================================================
@@ -41,7 +28,6 @@ LOGO_URL = "https://cdn-icons-png.flaticon.com/512/609/609803.png"
 
 # ==========================================================
 # EXACT TRAINED MODEL FEATURES
-# DO NOT CHANGE
 # ==========================================================
 MODEL_FEATURES = [
     "UNDER_CONSTRUCTION",
@@ -60,6 +46,10 @@ MODEL_FEATURES = [
 # ==========================================================
 @st.cache_resource
 def load_model():
+    if not MODEL_PATH.exists():
+        st.error(f"Model file not found: {MODEL_PATH}")
+        st.stop()
+
     return joblib.load(MODEL_PATH)
 
 # ==========================================================
@@ -67,6 +57,10 @@ def load_model():
 # ==========================================================
 @st.cache_data
 def load_data():
+    if not DATA_PATH.exists():
+        st.error(f"Dataset file not found: {DATA_PATH}")
+        st.stop()
+
     df = pd.read_csv(DATA_PATH)
 
     df = df.dropna(subset=["LATITUDE", "LONGITUDE", "ADDRESS"])
@@ -83,6 +77,9 @@ def load_data():
 
     return df
 
+# ==========================================================
+# INITIAL LOAD
+# ==========================================================
 model = load_model()
 df = load_data()
 
