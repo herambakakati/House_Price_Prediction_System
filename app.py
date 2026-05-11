@@ -3,6 +3,19 @@ import pandas as pd
 import numpy as np
 import joblib
 from pathlib import Path
+import os
+
+MODEL_PATH = "lightgbm_model.pkl"
+
+@st.cache_resource
+def load_model():
+    if not os.path.exists(MODEL_PATH):
+        st.error(f"Model file not found: {MODEL_PATH}")
+        st.stop()
+
+    return joblib.load(MODEL_PATH)
+
+model = load_model()
 
 # ==========================================================
 # PAGE CONFIG
